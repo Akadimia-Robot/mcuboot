@@ -24,7 +24,7 @@ from click.testing import CliRunner
 
 from imgtool.main import imgtool
 from tests.constants import KEY_TYPES, GEN_KEY_EXT, tmp_name, OPENSSL_KEY_TYPES, KEY_ENCODINGS, PUB_KEY_EXT, \
-    PVT_KEY_FORMATS, KEY_LANGS, PUB_HASH_ENCODINGS, PUB_KEY_HASH_EXT
+    PVT_KEY_FORMATS, KEY_LANGS, PUB_HASH_ENCODINGS, PUB_KEY_HASH_EXT, keys_dir
 
 UNSUPPORTED_TYPES = [("openssl", "ed25519"),
                      ("openssl", "x25519"),
@@ -169,7 +169,7 @@ class TestGetPriv(TestKeys):
     def test_getpriv(self, key_type, key_format, tmp_path_persistent):
         """Get private key"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
 
         result = self.runner.invoke(
             imgtool,
@@ -188,7 +188,7 @@ class TestGetPriv(TestKeys):
     def test_getpriv_with_password(self, key_type, key_format, tmp_path_persistent, monkeypatch):
         """Get private key with password"""
 
-        gen_key = "./keys/" + key_type + "_passwd" + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + "_passwd" + GEN_KEY_EXT
 
         monkeypatch.setattr('getpass.getpass', lambda _: self.password)
         result = self.runner.invoke(
@@ -207,7 +207,7 @@ class TestGetPriv(TestKeys):
     def test_getpriv_unsupported(self, key_format, key_type, tmp_path_persistent):
         """Get private key for unsupported combinations should print error message"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
 
         result = self.runner.invoke(
             imgtool,
@@ -228,7 +228,7 @@ class TestGetPriv(TestKeys):
     def test_getpriv_with_invalid_pass(self, key_type, key_format, tmp_path_persistent, monkeypatch):
         """Get private key with invalid password should print 'Invalid passphrase' in stdout"""
 
-        gen_key = "./keys/" + key_type + "_passwd" + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + "_passwd" + GEN_KEY_EXT
 
         monkeypatch.setattr('getpass.getpass', lambda _: 'invalid')
         result = self.runner.invoke(
@@ -251,7 +251,7 @@ class TestGetPub(TestKeys):
     def test_getpub(self, key_type, tmp_path_persistent):
         """Get public key - Default lang is c """
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + "default" + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -275,7 +275,7 @@ class TestGetPub(TestKeys):
     def test_getpub_with_encoding(self, key_type, encoding, tmp_path_persistent):
         """Get public key with encoding"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + encoding + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -301,7 +301,7 @@ class TestGetPub(TestKeys):
     def test_getpub_with_lang(self, key_type, lang, tmp_path_persistent):
         """Get public key with specified lang"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, PUB_KEY_EXT + "." + lang)
 
         assert not pub_key.exists()
@@ -327,7 +327,7 @@ class TestGetPub(TestKeys):
     def test_getpub_no_outfile(self, key_type, encoding, tmp_path_persistent):
         """Get public key without output file should dump only to stdout"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + encoding + "-null" + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -349,7 +349,7 @@ class TestGetPub(TestKeys):
     def test_getpub_invalid_encoding(self, key_type, tmp_path_persistent):
         """Get public key with invalid encoding should error message in stdout"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -372,7 +372,7 @@ class TestGetPub(TestKeys):
     def test_getpub_invalid_lang(self, key_type, tmp_path_persistent):
         """Get public key with invalid lang should print error message in stdout"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -397,7 +397,7 @@ class TestGetPub(TestKeys):
     def test_getpub_with_encoding_and_lang(self, key_type, encoding, lang, tmp_path_persistent):
         """Get public key with both encoding and lang should print error message"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + lang + encoding + PUB_KEY_EXT)
 
         assert not pub_key.exists()
@@ -423,7 +423,7 @@ class TestGetPub(TestKeys):
     def test_getpub_invalid_pass(self, key_type, encoding, tmp_path_persistent, monkeypatch):
         """Get public key with invalid password should print 'Invalid passphrase' in stdout"""
 
-        gen_key = "./keys/" + key_type + "_passwd" + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + "_passwd" + GEN_KEY_EXT
         pub_key = tmp_name(tmp_path_persistent, key_type, "." + encoding + PUB_KEY_EXT)
 
         monkeypatch.setattr('getpass.getpass', lambda _: 'invalid')
@@ -473,7 +473,7 @@ class TestGetPubHash(TestKeys):
     def test_getpubhash(self, key_type, tmp_path_persistent):
         """Get the hash of the public key - Default encoding is lang-c"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key_hash = tmp_name(
             tmp_path_persistent, key_type, "." + "default" + PUB_KEY_HASH_EXT
         )
@@ -498,7 +498,7 @@ class TestGetPubHash(TestKeys):
     def test_getpubhash_with_encoding(self, key_type, encoding, tmp_path_persistent):
         """Get the hash of the public key with encoding"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key_hash = tmp_name(
             tmp_path_persistent, key_type, "." + encoding + PUB_KEY_HASH_EXT
         )
@@ -525,7 +525,7 @@ class TestGetPubHash(TestKeys):
     def test_getpubhash_with_no_output(self, key_type, encoding, tmp_path_persistent):
         """Get the hash of the public key without outfile should dump only to stdout"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key_hash = tmp_name(
             tmp_path_persistent, key_type, "." + encoding + "-null" + PUB_KEY_HASH_EXT
         )
@@ -549,7 +549,7 @@ class TestGetPubHash(TestKeys):
     def test_getpubhash_with_invalid_encoding(self, key_type, tmp_path_persistent):
         """Get the hash of the public key with encoding"""
 
-        gen_key = "./keys/" + key_type + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + GEN_KEY_EXT
         pub_key_hash = tmp_name(
             tmp_path_persistent, key_type, "." + "invalid" + PUB_KEY_HASH_EXT
         )
@@ -576,7 +576,7 @@ class TestGetPubHash(TestKeys):
     def test_getpubhash_with_invalid_pass(self, key_type, encoding, tmp_path_persistent, monkeypatch):
         """Get the hash of the public key with invalid password should print 'Invalid passphrase' in stdout"""
 
-        gen_key = "./keys/" + key_type + "_passwd" + GEN_KEY_EXT
+        gen_key = keys_dir + "/" + key_type + "_passwd" + GEN_KEY_EXT
         pub_key_hash = tmp_name(
             tmp_path_persistent, key_type, "." + encoding + "-null" + PUB_KEY_HASH_EXT
         )
